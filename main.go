@@ -14,8 +14,7 @@ func main() {
 			"1. Get stats for Team \n " +
 			"2. Get stats for tournament \n " +
 			"3. Get generic stats on Teams \n " +
-			"4. Get generic stats on games \n " +
-			"5. Exit")
+			"4. Exit")
 
 		fmt.Scan(&input)
 		valid = validateInput(input)
@@ -29,14 +28,12 @@ func main() {
 	case 2:
 		tournamentStats(matchData)
 	case 3:
-		genericTeamStats(matchData)
+		genericStats(matchData)
 	case 4:
-		genericGameStats(matchData)
-	case 5:
 		os.Exit(0)
 	}
 }
 
 func validateInput(s int) bool {
-	return s > 0 && s <= 5
+	return s > 0 && s <= 4
 }
