@@ -88,8 +88,8 @@ func tournamentStats(matchMap map[int]MatchData) {
 	radiantWin := <-radiantChan
 	direWin := <-direChan
 
-	// win streak?
-
+	fmt.Printf("======================================\n")
+	fmt.Printf("Stats for %s \n", tournament)
 	fmt.Printf("Shortest match was %s vs %s: %s minutes.\n", shortest.RadiantTeam, shortest.DireTeam, formatDuration(shortest.Duration))
 	fmt.Printf("Longest match was %s vs %s: %s minutes.\n", longest.RadiantTeam, longest.DireTeam, formatDuration(longest.Duration))
 
@@ -100,6 +100,7 @@ func tournamentStats(matchMap map[int]MatchData) {
 	} else {
 		fmt.Printf("Dire had a higher winrate with: %.2f%%.\n", direWin)
 	}
+	fmt.Printf("======================================\n")
 }
 
 func genericStats(matchMap map[int]MatchData) {
@@ -149,6 +150,8 @@ func genericStats(matchMap map[int]MatchData) {
 
 	// win streak?
 
+	fmt.Printf("======================================\n")
+	fmt.Printf("Stats for last 100 pro matches\n")
 	fmt.Printf("Shortest match was %s vs %s: %s minutes.\n", shortest.RadiantTeam, shortest.DireTeam, formatDuration(shortest.Duration))
 	fmt.Printf("Longest match was %s vs %s: %s minutes.\n", longest.RadiantTeam, longest.DireTeam, formatDuration(longest.Duration))
 
@@ -160,6 +163,7 @@ func genericStats(matchMap map[int]MatchData) {
 		fmt.Printf("Dire had a higher winrate with: %.2f%%.\n", direWin)
 	}
 
+	fmt.Printf("======================================\n")
 }
 
 func GetAllTeamNames(matchMap map[int]MatchData) map[string]struct{} {
