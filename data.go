@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -39,7 +38,6 @@ func (c *MatchCache) GetData() (map[int]MatchData, error) {
 	c.mu.RLock()
 	if c.data != nil && time.Now().Before(c.expiresAt) {
 		defer c.mu.RUnlock()
-		fmt.Println("Valid cache found")
 		return c.data, nil
 	}
 	c.mu.RUnlock()
