@@ -34,7 +34,8 @@ func teamStats(matchMap map[int]MatchData) {
 	fmt.Printf("Stats for %s \n", team)
 	fmt.Printf("Shortest match: %d minutes. \n", shortest.Duration/60)
 	fmt.Printf("Longest match: %d minutes. \n", longest.Duration/60)
-	fmt.Printf("Win rate: %.2f%% across %d matches", winrate, len(teamMatches))
+	fmt.Printf("Win rate: %.2f%% across %d matches \n", winrate, len(teamMatches))
+	fmt.Printf("======================================\n")
 }
 
 func tournamentStats(matchMap map[int]MatchData) {
@@ -260,16 +261,22 @@ func FindLongestMatchByMap(matchMap map[int]MatchData) MatchData {
 }
 
 func FindTeamWinRate(matches []MatchData, team string) float32 {
+	if len(matches) == 0 {
+		return 0.0
+	}
+
 	teamWins := 0
 
 	for _, match := range matches {
-		if strings.EqualFold(match.RadiantTeam, team) {
-			if match.RadiantWin {
-				teamWins++
-			}
+		isRadiant := strings.EqualFold(match.RadiantTeam, team)
+		isDire := strings.EqualFold(match.DireTeam, team)
+
+		if (isRadiant && match.RadiantWin) || (isDire && !match.RadiantWin) {
+			teamWins++
 		}
 	}
-	return float32((teamWins / len(matches)) * 100)
+
+	return (float32(teamWins) / float32(len(matches))) * 100.0
 }
 
 func FindSideWinRate(matchMap map[int]MatchData) (float32, float32) {
