@@ -1,3 +1,3 @@
-module WebScraper
+module DOTAScrapr
 
 go 1.27
