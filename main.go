@@ -10,7 +10,7 @@ func main() {
 	cache := NewMatchCache(5 * time.Minute)
 
 	for {
-		fmt.Println("Get data on the past 100 Pro matches: \n " +
+		fmt.Println("For the past 100 Pro matches: \n " +
 			"1. Get stats for Team \n " +
 			"2. Get stats for tournament \n " +
 			"3. Get generic stats on Teams \n " +
