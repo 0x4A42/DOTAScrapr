@@ -7,14 +7,23 @@ import (
 )
 
 type TeamWinRate struct {
-	Team          string
+	Name          string
 	NumberOfGames int
 	WinRate       float32
 }
 
 type TeamWinStreak struct {
-	Team   string
+	Name   string
 	Streak int
+}
+
+type SharedStats struct {
+	Shortest      MatchData
+	Longest       MatchData
+	RadiantWin    float32
+	DireWin       float32
+	TopTeam       TeamWinRate
+	LongestStreak TeamWinStreak
 }
 
 func mapToSlice(matchMap map[int]MatchData) []MatchData {
@@ -133,7 +142,7 @@ func FindHighestWinRateTeam(matches []MatchData) TeamWinRate {
 		teamWinrate := FindTeamWinRate(teamMatches, teamName)
 
 		if teamWinrate > best.WinRate || (teamWinrate == best.WinRate && len(teamMatches) > best.NumberOfGames) {
-			best.Team = teamName
+			best.Name = teamName
 			best.NumberOfGames = len(teamMatches)
 			best.WinRate = teamWinrate
 		}
@@ -183,7 +192,7 @@ func FindHighestWinStreak(matches []MatchData) TeamWinStreak {
 	var topStreak TeamWinStreak
 	for team, streak := range bestStreaks {
 		if streak > topStreak.Streak {
-			topStreak.Team = team
+			topStreak.Name = team
 			topStreak.Streak = streak
 		}
 	}
@@ -239,4 +248,55 @@ func formatDuration(totalSeconds int) string {
 	minutes := totalSeconds / 60
 	seconds := totalSeconds % 60
 	return fmt.Sprintf("%d:%02d", minutes, seconds)
+}
+
+func computeSharedStats(matches []MatchData, includeStreak bool) SharedStats {
+	if len(matches) == 0 {
+		return SharedStats{}
+	}
+
+	shortestChan := make(chan MatchData, 1)
+	longestChan := make(chan MatchData, 1)
+	radiantChan := make(chan float32, 1)
+	direChan := make(chan float32, 1)
+	highestWinRateChan := make(chan TeamWinRate, 1)
+	streakChan := make(chan TeamWinStreak, 1)
+
+	go func() {
+		shortestChan <- FindShortestMatch(matches)
+	}()
+
+	go func() {
+		longestChan <- FindLongestMatch(matches)
+	}()
+
+	go func() {
+		radiant, dire := FindSideWinRate(matches)
+		radiantChan <- radiant
+		direChan <- dire
+	}()
+
+	go func() {
+		highestWinRateChan <- FindHighestWinRateTeam(matches)
+	}()
+
+	if includeStreak {
+		go func() {
+			streakChan <- FindHighestWinStreak(matches)
+		}()
+	}
+
+	stats := SharedStats{
+		Shortest:   <-shortestChan,
+		Longest:    <-longestChan,
+		RadiantWin: <-radiantChan,
+		DireWin:    <-direChan,
+		TopTeam:    <-highestWinRateChan,
+	}
+
+	if includeStreak {
+		stats.LongestStreak = <-streakChan
+	}
+
+	return stats
 }
